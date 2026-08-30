@@ -1,81 +1,31 @@
-import { withAuth } from "next-auth/middleware";
-import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
-export default withAuth(
-  function middleware(req) {
-    const roles = req.nextauth.token?.roles || [];
-    const pathname = req.nextUrl.pathname;
+export default async function HomePage() {
+  const session = await getServerSession(authOptions);
 
-    // تجميع كافة معرفات الرتب المسموح لها بالدخول
-    const allowedRoles = [
-      process.env.ROLE_JUSTICE_ADMIN,
-      process.env.ROLE_CHIEF_JUDGE,
-      process.env.ROLE_DEPUTY_JUDGE,
-      process.env.ROLE_PROSECUTOR_GENERAL,
-      process.env.ROLE_DEPUTY_PROSECUTOR,
-      process.env.ROLE_COURT_CLERK,
-      process.env.ROLE_NOTARY_PUBLIC,
-      process.env.ROLE_BAR_PRESIDENT,
-      process.env.ROLE_BAR_VICE_PRESIDENT,
-      process.env.ROLE_LAW_FIRM_HEAD,
-      process.env.ROLE_LAW_FIRM_DEPUTY,
-      process.env.ROLE_EXPERT_LAWYER,
-      process.env.ROLE_CERTIFIED_LAWYER,
-      process.env.ROLE_BAR_ASSOCIATION,
-      process.env.ROLE_ASSISTANT_LAWYER,
-      process.env.ROLE_LAW_FIRM_MEMBER,
-      process.env.NEXT_PUBLIC_ROLE_JUSTICE_ADMIN,
-      process.env.NEXT_PUBLIC_ROLE_CHIEF_JUDGE,
-      process.env.NEXT_PUBLIC_ROLE_DEPUTY_JUDGE,
-      process.env.NEXT_PUBLIC_ROLE_ADMIN,
-    ].filter(Boolean);
-
-    // رتب الإدارة والقضاء المسموح لها بالدخول للسجلات والقرارات
-    const courtStaffRoles = [
-      process.env.ROLE_JUSTICE_ADMIN,
-      process.env.ROLE_CHIEF_JUDGE,
-      process.env.ROLE_DEPUTY_JUDGE,
-      process.env.ROLE_PROSECUTOR_GENERAL,
-      process.env.ROLE_DEPUTY_PROSECUTOR,
-      process.env.ROLE_COURT_CLERK,
-      process.env.ROLE_NOTARY_PUBLIC,
-      process.env.NEXT_PUBLIC_ROLE_ADMIN,
-      process.env.NEXT_PUBLIC_ROLE_JUSTICE_ADMIN,
-      process.env.NEXT_PUBLIC_ROLE_CHIEF_JUDGE,
-      process.env.NEXT_PUBLIC_ROLE_DEPUTY_JUDGE,
-    ].filter(Boolean);
-
-    const isAuthorized = roles.some((role) => allowedRoles.includes(role));
-    const hasCourtAccess = roles.some((role) => courtStaffRoles.includes(role));
-
-    // 1. إذا كان المستخدم لا يملك أي رتبة معتمدة، يتم تحويله للرئيسية
-    if (!isAuthorized) {
-      return NextResponse.redirect(new URL("/", req.url));
-    }
-
-    // 2. حماية صفحات السجلات والقرارات من غير القضاة والإدارة
-    if (
-      (pathname.startsWith("/commercial") || pathname.startsWith("/reports")) &&
-      !hasCourtAccess
-    ) {
-      return NextResponse.redirect(new URL("/dashboard", req.url));
-    }
-
-    return NextResponse.next();
-  },
-  {
-    callbacks: {
-      authorized: ({ token }) => !!token,
-    },
+  if (session) {
+    redirect('/dashboard');
   }
-);
 
-// تطبيق الحماية على كافة المسارات الإدارية والقضائية
-export const config = {
-  matcher: [
-    "/dashboard/:path*",
-    "/commercial/:path*",
-    "/reports/:path*",
-    "/lawyers/:path*",
-  ],
-};
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[80vh]" dir="rtl">
+      <div className="bg-white p-10 rounded-2xl border-t-4 border-[#8b5a2b] shadow-xl text-center max-w-md w-full border-x border-b border-[#e6d5c3]">
+        <img src="/favicon.png" alt="شعار العدل" className="w-32 h-32 mx-auto mb-6 drop-shadow-md" />
+        <h1 className="text-3xl font-black text-[#5c4033] mb-2">وزارة العدل</h1>
+        <h2 className="text-lg font-bold text-[#8c7362] mb-4">محكمة مدينة العدالة</h2>
+        <p className="text-[#7a6352] mb-8 text-sm leading-relaxed">
+          النظام الموحد والموثق للقضاة والمحامين وكتاب العدل.
+        </p>
+
+        <a
+          href="/api/auth/signin/discord"
+          className="flex items-center justify-center gap-3 w-full bg-[#8b5a2b] hover:bg-[#6b4c3a] text-white font-bold py-3.5 px-4 rounded-xl transition duration-300 shadow-md"
+        >
+          <span>تسجيل الدخول عبر البوابة</span>
+        </a>
+      </div>
+    </div>
+  );
+}
