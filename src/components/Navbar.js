@@ -12,6 +12,7 @@ export default function Navbar() {
 
   const roles = session.user?.roles || [];
 
+  // قراءة الرتب مع التأكد من اعتماد بادئة العميل NEXT_PUBLIC_
   const CHIEF_JUDGE = process.env.NEXT_PUBLIC_ROLE_CHIEF_JUDGE;
   const DEPUTY_JUDGE = process.env.NEXT_PUBLIC_ROLE_DEPUTY_JUDGE;
   const ADMIN = process.env.NEXT_PUBLIC_ROLE_ADMIN;
@@ -34,6 +35,7 @@ export default function Navbar() {
 
   const hasFullAccess = roles.some((role) => authorizedRoles.includes(role));
 
+  // تحديد المسمى الوظفي المعروض للمستخدم في البطاقة
   let userTitle = 'منسوب العدل';
   if (CHIEF_JUDGE && roles.includes(CHIEF_JUDGE)) userTitle = 'قاضي المحكمة';
   else if (DEPUTY_JUDGE && roles.includes(DEPUTY_JUDGE)) userTitle = 'مساعد القاضي';
