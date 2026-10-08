@@ -6,6 +6,10 @@ export const authOptions = {
       clientId: process.env.DISCORD_CLIENT_ID || "",
       clientSecret: process.env.DISCORD_CLIENT_SECRET || "",
       authorization: { params: { scope: 'identify guilds guilds.members.read' } },
+      // ⚡ حل مشكلة الـ issuer:
+      issuer: "https://discord.com",
+      token: "https://discord.com/api/oauth2/token",
+      userinfo: "https://discord.com/api/users/@me",
     }),
   ],
   callbacks: {
@@ -13,7 +17,6 @@ export const authOptions = {
       if (account && profile) {
         token.id = profile.id;
 
-        // 🔍 سحب رتب المستخدم من سيرفر العدل عبر البوت مباشرة
         try {
           const guildId = process.env.GUILD_ID;
           const botToken = process.env.DISCORD_TOKEN || process.env.BOT_TOKEN;
