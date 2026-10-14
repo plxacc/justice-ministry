@@ -1,8 +1,7 @@
 // قائمة التواقيع والمصادقات المعتمدة
 export const SIGNATURE_PRESETS = [
-  { id: 'hajjaj', name: 'الحجاج أبو يوسف', title: 'قاضي المحكمة', img: '/sig-hajjaj.png', department: 'الدائرة القضائية الأولى' },
-  { id: 'tariq', name: 'طارق المنصوري', title: 'المدعي العام', img: '/sig-tariq.png', department: 'النيابة العامة' },
-  { id: 'hazzem', name: 'هزيم العلي', title: 'المدعي العام', img: '/sig-hazzem.png', department: 'فرع النيابة العامة' },
+  { id: 'hazzem', name: 'هزيم العلي', title: 'القاضي', img: '/sig-hazzem.png', department: 'فرع وزارة العدل' },
+    { id: 'fahad', name: 'فهد حسين', title: 'المد', img: '/sig-fahad.png', department: 'فرع النيابة العامة' },
   { id: 'april', name: 'ابريل ميندوزا', title: 'وكيل النيابة', img: '/sig-april.png', department: 'فرع وكلاء النيابة' },
 ];
 
